@@ -4,7 +4,8 @@ import json
 import os
 import re
 
-EMOJI_MAPPING_FILE = os.path.join('Emojifier','data','emoji-mapping2.json')
+EMOJI_MAPPING_FILE = os.path.join('..','data','twitter-mapping.json')
+MIN_EMOJIS = 1
 MAX_EMOJIS = 2
 
 def makeGroups(lst, n):
@@ -33,7 +34,7 @@ def getEmojisForGroups(groups, mapping):
                     afterEmojis.extend(mapping[t]["after"])
         
         # numBefore = int(MAX_EMOJIS/2) if beforeEmojis else 0
-        numAfter = int(MAX_EMOJIS) if afterEmojis else 0
+        numAfter = random.randint(MIN_EMOJIS, MAX_EMOJIS) if afterEmojis else 0
         # for i in range(0, numBefore):
             # result.append(random.choice(beforeEmojis))
         result.extend(g)
@@ -42,7 +43,7 @@ def getEmojisForGroups(groups, mapping):
     return result
         
 
-def generateEmojipasta(text, mapping, freq = 5):
+def generateEmojipasta(text, mapping, freq = 3):
     tokens = text.split()
     groups = makeGroups(tokens, random.randint(2, freq))
     result = getEmojisForGroups(groups, mapping)

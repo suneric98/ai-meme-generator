@@ -15,8 +15,8 @@ import emoji
 Helper functions for identifying emojis and defining global paths
 """
 
-EMOJI_MAPPING = os.path.join('..','data','emoji-mapping2.json')
-COMMENTS = os.path.join('..','data','updated-comments.txt')
+EMOJI_MAPPING = os.path.join('..','data','twitter-mapping.json')
+COMMENTS = os.path.join('..','data','twitter-data.txt')
 PUNC = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
 
 EMOJIS = set(emoji.emojize(emoji_code) for emoji_code in emoji.UNICODE_EMOJI.values())

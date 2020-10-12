@@ -61,6 +61,5 @@ print("# of emojis to get tweets for: {}".format(N))
 pool = Pool(processes=8)
 data = pool.map(get_tweets_id,ids)
 data = [i for sublist in data for i in sublist]
-print(data)
 with open('best-twitter-data.txt', 'w') as f:
     f.writelines(data)

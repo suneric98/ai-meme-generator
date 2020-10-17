@@ -31,8 +31,11 @@ class Tokenizer:
     def __init__(self, emojis):
         self.PUNC = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
         self.EMOJIS = set(emojis)
+        self.FULL_EMOJIS = set(emoji.emojize(emoji_code) for emoji_code in emoji.UNICODE_EMOJI.values())
         
     def tokenize(self, line):
+        line = "".join([l for l in line if l not in self.PUNC])
+        line = line.lower()
         tokens = []
         idx = 0
         while idx < len(line):
@@ -43,6 +46,9 @@ class Tokenizer:
             if char in self.EMOJIS: # emoji
                 type = TokenType.EMOJIS
                 raw = char
+            elif char in self.FULL_EMOJIS: # emoji we want to skip
+                idx += 1
+                continue
             elif not char.isspace(): # word
                 word, idx = self.parseWord(line, idx)
                 type = TokenType.WORD
@@ -58,7 +64,7 @@ class Tokenizer:
     def parseWord(self, line, idx):
         endOfWord = idx
         word = ""
-        while endOfWord < len(line) and not line[endOfWord].isspace():
+        while endOfWord < len(line) and not line[endOfWord].isspace() and not line[endOfWord] in self.FULL_EMOJIS:
             word += line[endOfWord]
             endOfWord += 1
         return word, endOfWord
@@ -73,7 +79,7 @@ class Tokenizer:
         j = idx + 1
         while j < len(tokens) and len(words) < 3:
             if tokens[j].token_type == TokenType.WORD:
-                words.insert(0,tokens[j].raw)
+                words.append(tokens[j].raw)
             j += 1
         return words
         
@@ -100,7 +106,6 @@ class Tokenizer:
 def main():
     EMOJI_MAPPING = os.path.join('..','data','test.json')
     COMMENTS = os.path.join('..','data','twitter-data.txt')
-    PUNC = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
     EMOJIS = set(emoji.emojize(emoji_code) for emoji_code in emoji.UNICODE_EMOJI.values())
     emoji_mappings = defaultdict(lambda: defaultdict(list))
     tokenizer = Tokenizer(EMOJIS)
@@ -109,7 +114,6 @@ def main():
     with open(COMMENTS, "r", encoding="utf-8") as comments_file:
         for line in comments_file:
             line = line.lower()
-            line = "".join([l for l in line if l not in PUNC])
             tokens = tokenizer.tokenize(line)
             for i, t in enumerate(tokens):
                 if t.token_type == TokenType.EMOJIS:

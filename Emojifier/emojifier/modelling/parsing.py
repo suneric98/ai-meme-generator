@@ -69,17 +69,19 @@ class Tokenizer:
             endOfWord += 1
         return word, endOfWord
 
-    def findClosest3Words(self, tokens, idx):
+    def findClosestNWords(self, N, tokens, idx):
         j = idx - 1
         words = []
-        while j >= 0 and len(words) < 3:
-            if tokens[j].token_type == TokenType.WORD:
-                words.insert(0,tokens[j].raw)
+        while j >= 0 and len(words) < N:
+            t = tokens[j]
+            if t.token_type == TokenType.WORD and t.raw.strip() != '':
+                words.insert(0,t.raw)
             j -= 1
         j = idx + 1
-        while j < len(tokens) and len(words) < 3:
-            if tokens[j].token_type == TokenType.WORD:
-                words.append(tokens[j].raw)
+        while j < len(tokens) and len(words) < N:
+            t = tokens[j]
+            if t.token_type == TokenType.WORD and t.raw.strip() != '':
+                words.append(t.raw)
             j += 1
         return words
         
@@ -89,15 +91,17 @@ class Tokenizer:
         j = idx - 1
 
         while j >= 0:
-            if tokens[j].token_type == TokenType.WORD:
-                before = tokens[j].raw
+            t = tokens[j]
+            if t.token_type == TokenType.WORD and t.raw.strip() != '':
+                before = t.raw
                 break
             j -= 1
         
         j = idx + 1
         while j < len(tokens):
-            if tokens[j].token_type == TokenType.WORD:
-                after = tokens[j].raw
+            t = tokens[j]
+            if t.token_type == TokenType.WORD and t.raw.strip() != '':
+                after = t.raw
                 break
             j += 1
         return before, after
@@ -113,7 +117,7 @@ def main():
     print("Creating mappings...")
     with open(COMMENTS, "r", encoding="utf-8") as comments_file:
         for line in comments_file:
-            line = line.lower()
+            line = line.lower().strip()
             tokens = tokenizer.tokenize(line)
             for i, t in enumerate(tokens):
                 if t.token_type == TokenType.EMOJIS:

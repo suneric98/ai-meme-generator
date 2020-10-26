@@ -1,5 +1,5 @@
 # load text
-f = open("twitter-data.txt", "r", encoding="utf-8")
+f = open("best-twitter-data.txt", "r", encoding="utf-8")
 text = f.read()
 f.close()
 

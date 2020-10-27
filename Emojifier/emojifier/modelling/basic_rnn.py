@@ -11,7 +11,7 @@ import time
 from tqdm import tqdm
 
 class RNN(nn.Module):
-	def __init__(self, input_dim, h, output_dim = 5): # Add relevant parameters
+	def __init__(self, input_dim, h, output_dim = 2): # Add relevant parameters
 		super(RNN, self).__init__()
 		self.rnn = nn.RNN(input_dim, h)
 		self.finalLayer = nn.Linear(h, output_dim)

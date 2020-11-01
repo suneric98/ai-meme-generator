@@ -19,8 +19,8 @@ from langdetect.lang_detect_exception import LangDetectException
 from sseclient import SSEClient
 
 EMOJIS = set(emoji.emojize(emoji_code) for emoji_code in emoji.UNICODE_EMOJI.values())
-ID_FILE = 'best.json'
-NUM_TWEETS = 1000
+ID_FILE = '../data/best-emojis.json'
+NUM_TWEETS = 5000
 
 def get_ids():
     data = None
@@ -61,5 +61,5 @@ print("# of emojis to get tweets for: {}".format(N))
 pool = Pool(processes=8)
 data = pool.map(get_tweets_id,ids)
 data = [i for sublist in data for i in sublist]
-with open('best-twitter-data.txt', 'w') as f:
+with open('../data/best-twitter-data2.txt', 'w') as f:
     f.writelines(data)

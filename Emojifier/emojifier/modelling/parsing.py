@@ -10,6 +10,7 @@ import os
 from collections import defaultdict
 import json
 import emoji
+from nltk.corpus import stopwords
 
 """
 Helper functions for identifying emojis and defining global paths
@@ -22,6 +23,8 @@ class Token:
     def __init__(self, token_type, raw):
         self.token_type = token_type
         self.raw = raw
+
+stop_words = set(stopwords.words('english')) 
 
 """
 Code to implement parsing
@@ -51,6 +54,8 @@ class Tokenizer:
                 continue
             elif not char.isspace(): # word
                 word, idx = self.parseWord(line, idx)
+                if word in stop_words:
+                    continue
                 type = TokenType.WORD
                 raw = word
             else: # whitespace

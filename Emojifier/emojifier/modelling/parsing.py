@@ -6,6 +6,7 @@ Each word has
 """
 
 import io
+import re
 import os
 from collections import defaultdict
 import json
@@ -32,12 +33,13 @@ Code to implement parsing
 
 class Tokenizer:
     def __init__(self, emojis):
-        self.PUNC = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
+        self.PUNC = '''!()-[]{};:'"\,<>./?@#$%^&*_~0123456789'''
         self.EMOJIS = set(emojis)
         self.FULL_EMOJIS = set(emoji.emojize(emoji_code) for emoji_code in emoji.UNICODE_EMOJI.values())
         
     def tokenize(self, line):
         line = "".join([l for l in line if l not in self.PUNC])
+        # line = re.sub(self.PUNC, "", line)
         line = line.lower()
         tokens = []
         idx = 0

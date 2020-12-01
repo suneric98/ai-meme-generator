@@ -3,8 +3,11 @@ from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired
 
 
-class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    remember_me = BooleanField('Remember Me')
-    submit = SubmitField('Sign In')
+class MemeForm(FlaskForm):
+    input_s = StringField('Input', validators=[DataRequired()])
+    submit = SubmitField('Classify Meme')
+
+
+class EmojiForm(FlaskForm):
+    input_s = StringField('Input', validators=[DataRequired()])
+    submit = SubmitField('Add Emojis')

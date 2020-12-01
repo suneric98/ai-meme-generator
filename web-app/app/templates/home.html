@@ -1,5 +1,44 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-<h1>Welceme Home!</h1>
+<h1>AI Meme Generator</h1>
+
+<div class="card">
+  <div class="card-header">
+    <a class="cardlink" href="{{ url_for('home') }}">About the Team</a>
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">Eric</h5>
+    <p class="card-text">Some info.</p>
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">Kathy</h5>
+    <p class="card-text">Some info.</p>
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">Marvin</h5>
+    <p class="card-text">Some info.</p>
+  </div>
+</div><br>
+
+<div class="card">
+  <div class="card-header">
+    <a class="cardlink" href="{{ url_for('emoji') }}">Emojifier</a>
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">About the Project</h5>
+    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+  </div>
+</div><br>
+
+<div class="card">
+  <div class="card-header">
+    <a class="cardlink" href="{{ url_for('meme') }}">Meme Classifier</a>
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">About the Project</h5>
+    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+  </div>
+</div><br>
+
 {% endblock %}

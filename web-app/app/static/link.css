@@ -1,0 +1,8 @@
+.cardlink:hover {
+  color: rgba(0, 0, 0, 0.7);
+  text-decoration: none;
+}
+
+.cardlink {
+  color: rgba(0, 0, 0, 0.5);
+}

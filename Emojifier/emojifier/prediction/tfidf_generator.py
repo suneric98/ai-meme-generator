@@ -76,9 +76,9 @@ def main():
         text = input()
         if text == "quit":
             break
-        # answer = generateEmojipasta(text)
-        generateInsight(text)
-        # print(answer)
+        answer = generateEmojipasta(text)
+        # generateInsight(text)
+        print(answer)
 
 if __name__ == "__main__":
     main()

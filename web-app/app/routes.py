@@ -32,3 +32,9 @@ def meme():
 @app.route('/emoji_vis', methods=['GET', 'POST'])
 def emoji_vis():
     return render_template('emoji_vis.html', title="Emoji Visualization")
+
+
+@app.route('/csv/emoji_insights.csv', methods=['GET'])
+def emoji_insight():
+    with open("./app/csv/emoji_insights.csv", "r") as fp:
+        return fp.read()

@@ -88,9 +88,8 @@ def generateInsight(text):
             probForWords[i] = [round(x/maximum, 4) for x in probForWords2]
 
     df = pd.DataFrame(probForWords)
-    df = df.transpose()
-    df.columns = tokens
-    df.to_csv('./app/static/insights.csv', index=False, header=True)
+    df.insert(0, -1, tokens)
+    df.to_csv('./app/csv/emoji_insights.csv', index=False, header=True)
 
     # probForWords3 = [df.columns.values.tolist()] + df.values.tolist()
     # print(probForWords3)

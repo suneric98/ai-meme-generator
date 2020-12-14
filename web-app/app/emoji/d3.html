@@ -5,18 +5,20 @@
 <script src="https://d3js.org/d3.v4.js"></script>
 
 <!-- Create a div where the graph will take place -->
-<div id="my_dataviz"></div>
+<div id="graph"></div>
+<br>
+<div id="buttons"></div>
 
 <script>
   var emojis = ["😂", "😍", "😭", "😊", "💕", "😒", "😉", "👌", "👍", "🙏", "👀", "🔥", "💯", "👏", "💪"];
-  d3.csv("insights.csv", function (data) {
+  d3.csv("emoji_insights.csv", function (data) {
     var cols = data.columns;
     var i;
-    for (i = 0; i < cols.length; i++) {
-      d3.select("#my_dataviz")
-        .append("button")
+    for (i = 0; i < data.length; i++) {
+      d3.select("#buttons")
+        .append("span")
         .attr("onclick", "update(".concat(i.toString(), ")"))
-        .text(cols[i]);
+        .text(data[i][-1]);
     }
   });
 
@@ -26,7 +28,7 @@
     height = 400 - margin.top - margin.bottom;
 
   // append the svg object to the body of the page
-  var svg = d3.select("#my_dataviz")
+  var svg = d3.select("#graph")
     .append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
@@ -53,19 +55,17 @@
 
   // A function that create / update the plot for a given variable:
   function update(data_index) {
-    d3.csv("insights.csv", function (data) {
-      var cols = data.columns;
+    d3.csv("emoji_insights.csv", function (data) {
       var dat = [];
       var emojis = ["😂", "😍", "😭", "😊", "💕", "😒", "😉", "👌", "👍", "🙏", "👀", "🔥", "💯", "👏", "💪"];
-      for (i = 0; i < cols.length; i++) {
+
+      for (i = 0; i < data.length; i++) {
         var temp = []
         for (j = 0; j < 15; j++) {
-          var keys = Object.keys(data[j]);
-          temp.push({ group: emojis[j], value: data[j][keys[i]] })
+          temp.push({ group: emojis[j], value: data[i][j] })
         }
         dat.push(temp)
       }
-      console.log(dat)
 
       var data_var = dat[data_index];
 

@@ -58,18 +58,15 @@ def parse_blocks(blocks):
 
 X_text = [' '.join(parse_blocks(meme['boxes'])) for meme in memes_data]
 
-plt.hist(y)
-plt.show()
-
 # implementing best results
-vectorizer = TfidfVectorizer(max_df=0.5, min_df=3, ngram_range=(1,2))
+vectorizer = TfidfVectorizer(max_df=1.0, min_df=3, ngram_range=(1,2))
 # vectorizer = TfidfVectorizer()
 
 vectors = vectorizer.fit_transform(X_text)
 print(vectors.shape)
 scaled_vectors = StandardScaler().fit_transform(vectors.toarray())
 
-model = LogisticRegression(C=1.0,penalty='l2',solver='lbfgs', tol=0.00001)
+model = LogisticRegression(C=1.0,penalty='l2',solver='saga', tol=0.00001)
 # model = LogisticRegression()
 
 X_train, X_test, y_train, y_test = train_test_split(scaled_vectors, y, train_size=0.8, test_size=0.2)
@@ -80,5 +77,5 @@ print(accuracy_score(y_test, pred))
 plt.hist(pred)
 plt.show()
 
-dump(vectorizer, '../prediction/meme_vectorizer.joblib')
-dump(model, '../prediction/meme_predictor.joblib')
+# dump(vectorizer, '../prediction/meme_vectorizer.joblib')
+# dump(model, '../prediction/meme_predictor.joblib')

@@ -16,7 +16,7 @@ def emoji():
     form = EmojiForm()
     if form.validate_on_submit():
         flash('Output: {}'.format(generateEmojipasta(form.input_s.data)))
-        return redirect(url_for('emoji'))
+        return redirect(url_for('emoji_vis'))
     return render_template('emoji.html', title='Emojifier', form=form)
 
 
@@ -27,3 +27,8 @@ def meme():
         flash('Output: {}'.format(form.input_s.data))
         return redirect(url_for('meme'))
     return render_template('meme.html', title='Meme Classifier', form=form)
+
+
+@app.route('/emoji_vis', methods=['GET', 'POST'])
+def emoji_vis():
+    return render_template('emoji_vis.html', title="Emoji Visualization")

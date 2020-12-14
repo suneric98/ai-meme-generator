@@ -90,7 +90,7 @@ def generateInsight(text):
     df = pd.DataFrame(probForWords)
     df = df.transpose()
     df.columns = tokens
-    df.to_csv('./app/emoji/insights.csv', index=False, header=True)
+    df.to_csv('./app/static/insights.csv', index=False, header=True)
 
     # probForWords3 = [df.columns.values.tolist()] + df.values.tolist()
     # print(probForWords3)

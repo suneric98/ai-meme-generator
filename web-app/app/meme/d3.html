@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<!-- Load d3.js -->
+<script src="https://d3js.org/d3.v4.js"></script>
+
+<!-- Create a div where the graph will take place -->
+<div id="graph"></div>
+<br>
+<div id="buttons"></div>
+<br>
+<div id="probability"></div>
+
+<script>
+  var meme_formats = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  var emojis = ["😂", "😍", "😭", "😊", "💕", "😒", "😉", "👌", "👍", "🙏", "👀", "🔥", "💯", "👏", "💪"];
+  d3.csv("meme_insights.csv", function (data) {
+    var cols = data.columns;
+    var i;
+    for (i = 0; i < data.length; i++) {
+      d3.select("#buttons")
+        .append("span")
+        .attr("onclick", "update(".concat(i.toString(), ")"))
+        .text(data[i][-1]);
+    }
+  });
+
+  // set the dimensions and margins of the graph
+  var margin = { top: 30, right: 30, bottom: 70, left: 60 },
+    width = 460 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+  // append the svg object to the body of the page
+  var svg = d3.select("#graph")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform",
+      "translate(" + margin.left + "," + margin.top + ")");
+
+  var svg2 = d3.select("#probability")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform",
+      "translate(" + margin.left + "," + margin.top + ")");
+
+  // X axis
+  var x = d3.scaleBand()
+    .range([0, width])
+    .domain(meme_formats)
+    .padding(0.2);
+  svg.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x))
+  svg2.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x))
+
+  // Add Y axis
+  var y = d3.scaleLinear()
+    .domain([0, 1])
+    .range([height, 0]);
+  svg.append("g")
+    .attr("class", "myYaxis")
+    .call(d3.axisLeft(y));
+  svg2.append("g")
+    .attr("class", "myYaxis")
+    .call(d3.axisLeft(y));
+
+  d3.csv("meme_probability.csv", function (data2) {
+    console.log(data2)
+    var dat = [];
+    var meme_formats = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+    var temp = []
+    for (j = 0; j < 10; j++) {
+      temp.push({ group: meme_formats[j], value: data2[j][0] })
+    }
+    dat.push(temp)
+
+    console.log(dat[0])
+
+    var u = svg2.selectAll("rect")
+      .data(dat[0])
+
+    u
+      .enter()
+      .append("rect")
+      .merge(u)
+      .transition()
+      .duration(1000)
+      .attr("x", function (d) { return x(d.group); })
+      .attr("y", function (d) { return y(d.value); })
+      .attr("width", x.bandwidth())
+      .attr("height", function (d) { return height - y(d.value); })
+      .attr("fill", "#69b3a2")
+  });
+
+  // A function that create / update the plot for a given variable:
+  function update(data_index) {
+    d3.csv("meme_insights.csv", function (data) {
+      var dat = [];
+      var meme_formats = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+      var emojis = ["😂", "😍", "😭", "😊", "💕", "😒", "😉", "👌", "👍", "🙏", "👀", "🔥", "💯", "👏", "💪"];
+
+      for (i = 0; i < data.length; i++) {
+        var temp = []
+        for (j = 0; j < 10; j++) {
+          temp.push({ group: meme_formats[j], value: data[i][j] })
+        }
+        dat.push(temp)
+      }
+
+      var data_var = dat[data_index];
+      console.log(data_var)
+
+      var u = svg.selectAll("rect")
+        .data(data_var)
+
+      u
+        .enter()
+        .append("rect")
+        .merge(u)
+        .transition()
+        .duration(1000)
+        .attr("x", function (d) { return x(d.group); })
+        .attr("y", function (d) { return y(d.value); })
+        .attr("width", x.bandwidth())
+        .attr("height", function (d) { return height - y(d.value); })
+        .attr("fill", "#69b3a2")
+    });
+  }
+
+  // Initialize the plot with the first dataset
+  update(0)
+
+</script>

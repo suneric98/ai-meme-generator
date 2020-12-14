@@ -2,6 +2,7 @@ from flask import render_template, flash, redirect, url_for
 from app import app
 from app.forms import EmojiForm
 from app.forms import MemeForm
+from .emoji.tfidf_generator import generateEmojipasta
 
 
 @app.route('/')
@@ -14,8 +15,8 @@ def home():
 def emoji():
     form = EmojiForm()
     if form.validate_on_submit():
-        flash('Processing input: {}'.format(form.input_s.data))
-        return redirect(url_for('home'))
+        flash('Output: {}'.format(generateEmojipasta(form.input_s.data)))
+        return redirect(url_for('emoji'))
     return render_template('emoji.html', title='Emojifier', form=form)
 
 
@@ -23,6 +24,6 @@ def emoji():
 def meme():
     form = MemeForm()
     if form.validate_on_submit():
-        flash('Processing input: {}'.format(form.input_s.data))
-        return redirect(url_for('home'))
+        flash('Output: {}'.format(form.input_s.data))
+        return redirect(url_for('meme'))
     return render_template('meme.html', title='Meme Classifier', form=form)

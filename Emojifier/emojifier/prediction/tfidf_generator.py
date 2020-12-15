@@ -51,7 +51,7 @@ def getProbabilities(group):
     clean = "".join([l for l in group if l not in PUNC])
     clean = clean.lower()
     feats = vectorizer.transform([clean])
-    pred = clf.predict_proba(feats)
+    pred = clf.predict_proba(feats)[0]
     return pred
 
 # for each word, returns the 'insight' of that word: the difference of the
@@ -65,9 +65,7 @@ def generateInsight(text):
         for word_idx,_ in enumerate(group):
             probs = getProbabilities(group[:word_idx] +  group[word_idx+1:])
             p = np.array(default[i]) - np.array(probs)
-            probForWords.append(p.squeeze().tolist())
-    print(probForWords)
-    print(len(probForWords))
+            probForWords.append(p.tolist())
     return probForWords
 
 def main():

@@ -115,20 +115,16 @@
 
       var data_var = dat[data_index];
 
-      var u = svg.selectAll("rect")
+      svg.selectAll("rect")
         .data(data_var)
-
-      u
         .enter()
         .append("rect")
-        .merge(u)
-        .transition()
-        .duration(1000)
         .attr("x", function (d) { return x(d.group); })
         .attr("y", function (d) { return y(d.value); })
         .attr("width", x.bandwidth())
         .attr("height", function (d) { return height - y(d.value); })
-        .attr("fill", "#69b3a2")
+        .attr("fill", "#69b3a2");
+      console.log("????");
     });
   }
 

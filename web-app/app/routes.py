@@ -45,6 +45,10 @@ def emoji_insight():
     with open("./app/csv/emoji_insights.csv", "r") as fp:
         return fp.read()
 
+@app.route('/csv/emoji_insights.json', methods=['GET'])
+def emoji_insight_json():
+    with open("./app/csv/emoji_insights.json", "r") as fp:
+        return fp.read()
 
 @app.route('/csv/meme_insights.csv', methods=['GET'])
 def meme_insight():

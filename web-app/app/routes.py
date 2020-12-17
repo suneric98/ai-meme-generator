@@ -25,7 +25,9 @@ def emoji():
 def meme():
     form = MemeForm()
     if form.validate_on_submit():
-        flash('Output: {}'.format(generateMemePrediction(form.input_s.data)))
+        prediction, url = generateMemePrediction(form.input_s.data)
+        flash('Output: {}'.format(prediction))
+        flash('URL:  {}'.format(url))
         return redirect(url_for('meme_vis'))
     return render_template('meme.html', title='Meme Classifier', form=form)
 
@@ -37,7 +39,7 @@ def emoji_vis():
 
 @app.route('/meme_vis', methods=['GET', 'POST'])
 def meme_vis():
-    return render_template('meme_vis.html', title="Meme Visualization")
+    return render_template('meme_vis2.html', title="Meme Visualization")
 
 
 @app.route('/csv/emoji_insights.csv', methods=['GET'])
@@ -59,4 +61,15 @@ def meme_insight():
 @app.route('/csv/meme_probability.csv', methods=['GET'])
 def meme_probability():
     with open("./app/csv/meme_probability.csv", "r") as fp:
+        return fp.read()
+
+@app.route('/csv/meme_insights.json', methods=['GET'])
+def meme_insight_json():
+    with open("./app/csv/meme_insights.json", "r") as fp:
+        return fp.read()
+
+
+@app.route('/csv/meme_probability.json', methods=['GET'])
+def meme_probability_json():
+    with open("./app/csv/meme_probability.json", "r") as fp:
         return fp.read()

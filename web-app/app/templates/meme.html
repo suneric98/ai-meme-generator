@@ -3,6 +3,12 @@
 
 {% block app_content %}
 <h1>Please enter a sentence to be classified as a meme format.</h1>
+
+<span>When entering the text, please separate blocks by |</span>
+<br>
+<span>For example, if I wanted the meme to have top text: 'top text' and bottom
+text: 'bottom text', I would enter: 'top text | bottom text'</span>
+<br>
 <div class="row">
   <div class="col-md-4">
     {{ wtf.quick_form(form) }}

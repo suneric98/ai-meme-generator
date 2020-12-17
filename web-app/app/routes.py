@@ -39,7 +39,7 @@ def emoji_vis():
 
 @app.route('/meme_vis', methods=['GET', 'POST'])
 def meme_vis():
-    return render_template('meme_vis2.html', title="Meme Visualization")
+    return render_template('meme_vis.html', title="Meme Visualization")
 
 
 @app.route('/csv/emoji_insights.csv', methods=['GET'])

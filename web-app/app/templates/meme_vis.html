@@ -2,6 +2,19 @@
 
 {% block app_content %}
 
+<style>
+    div.tooltip {
+        position: absolute;
+        text-align: center;
+        padding: 2px;
+        font: 12px sans-serif;
+        background: lightgray;
+        border: 0px;
+        border-radius: 8px;
+        pointer-events: none;
+    }
+</style>
+
 <!-- Load d3.js -->
 <script src="https://d3js.org/d3.v4.js"></script>
 
@@ -9,8 +22,7 @@
 <div id="graph"></div>
 <div id="buttons"><span>Input: </span></div>
 <div><span>Click on words to get insights on how much it influenced the choice of meme format.</span></div>
-<div id="probability"></div>
-
+<div id="container"></div>
 <script>
     var meme_formats = [
         'Woman Yelling At Cat',
@@ -57,6 +69,11 @@
         .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
 
+    // tooltip to help with mouseover
+    var div = d3.select("#container").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+
     // A function that create / update the plot for a given variable:
     function update(group_data) {
         svg.selectAll("*").remove();
@@ -67,22 +84,14 @@
             .range([0, width])
             .domain(meme_formats)
             .padding(0.2);
-        svg.append("g")
-            .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(x))
-            .selectAll("text")
-            .style("text-anchor", "end")
-            .attr("dx", "-.8em")
-            .attr("dy", ".15em")
-            .attr("transform", "rotate(-65)");
 
         // text label for the x axis
         svg.append("text")
             .attr("transform",
                 "translate(" + (width / 2) + " ," +
-                (height + margin.top + 70) + ")")
+                (height + margin.top + margin.bottom - 50) + ")")
             .style("text-anchor", "middle")
-            .text("Meme Formats");
+            .text("Meme Format");
 
         // specify bar width
         var bar_width = x.bandwidth();
@@ -94,11 +103,38 @@
 
         // Add Y axis, adjusts depending on probabilities
         var y = d3.scaleLinear()
-            .domain([0, d3.max(group_data.probs, d => d.value) + 0.05])
+            .domain([d3.min(group_data.probs, d => d.value - 0.01), d3.max(group_data.probs, d => d.value) + 0.05])
             .range([height, 0]);
+
+        // Add axises to graph
+        svg.append("g")
+            .attr("transform", "translate(0," + y(0) + ")")
+            .call(d3.axisBottom(x).tickValues([]));
+        var bot_axis = svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x).tickSize(0));
+        bot_axis.select(".domain").remove();
+        bot_axis.selectAll("text")
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", ".15em")
+            .attr("transform", "rotate(-65)");
         svg.append("g")
             .attr("class", "myYaxis")
             .call(d3.axisLeft(y));
+
+        // Gridlines for x
+        for (var i = 1; i < meme_formats.length; i++) {
+            var e = meme_formats[i];
+            var x_px = x(e) - bar_width * 0.1;
+            svg.append('line')
+                .attr("x1", x_px)
+                .attr("x2", x_px)
+                .attr("y1", 0)
+                .attr("y2", height)
+                .attr("stroke", "lightgray")
+                .attr("stroke-width", 2);
+        }
 
         // text label for the y axis
         svg.append("text")
@@ -121,22 +157,31 @@
             .attr("x", function (d) {
                 return x(d.group) + x_bars(d.word);
             })
-            .attr("y", function (d) {
-                return y(0);
-            })
+            .attr("y", d => y(0))
             .attr("width", x_bars.bandwidth())
-            .attr("height", function (d) {
-                return height - y(0);
+            .attr("height", d => y(0) - y(0))
+            .attr("fill", d => color(d.word))
+            .on('mouseover', function (d) {
+                div.transition()
+                    .duration(200)
+                    .style("opacity", 1.0);
+                div.html("Meme: " + d.group + "<br>" + "Word: " + d.word + "<br>" + "Prob: " + d.value.toFixed(3))
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY - 60) + "px");
             })
-            .attr("fill", d => color(d.word));
+            .on('mouseout', function (d) {
+                div.transition()
+                    .duration(200)
+                    .style("opacity", 1.0);
+                div.html("");
+            });
 
         // animation
         svg.selectAll("rect")
             .transition()
             .duration(800)
-            .attr("y", d => y(d.value))
-            .attr("height", d => height - y(d.value));
-        // .delay(function(d,i){console.log(i) ; return(i*100)});
+            .attr("y", d => y(Math.max(0, d.value)))
+            .attr("height", d => Math.abs(y(d.value) - y(0)));
 
         // legend dots
         svg.selectAll("mydots")

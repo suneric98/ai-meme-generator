@@ -89,6 +89,7 @@ def generateInsight(text):
     probForWords = []
     for i, _ in enumerate(words):
         probs = generateProbability(' '.join(words[:i] + words[i+1:]))
+        probs = np.array(default) - np.array(probs)
         probForWords.append(probs.tolist())
 
     allProbs = []

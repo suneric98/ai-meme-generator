@@ -72,6 +72,7 @@ def generateInsight(groups):
     for i, group in enumerate(groups):  # calculating prob when removing a word
         for word_idx, _ in enumerate(group):
             probs = getProbabilities(group[:word_idx] + group[word_idx+1:])
+            probs = np.array(default[i]) - np.array(probs)
             probForWords.append(probs.tolist())
 
     allWords = []

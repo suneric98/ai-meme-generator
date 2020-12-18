@@ -2,6 +2,19 @@
 
 {% block app_content %}
 
+<style>
+    div.tooltip {
+        position: absolute;
+        text-align: center;
+        padding: 2px;
+        font: 12px sans-serif;
+        background: lightgray;
+        border: 0px;
+        border-radius: 8px;
+        pointer-events: none;
+    }
+</style>
+
 <!-- Load d3.js -->
 <script src="https://d3js.org/d3.v4.js"></script>
 
@@ -10,7 +23,7 @@
 <div id="graph"></div>
 <div id="buttons"><span>Input: </span></div>
 <div><span>Click on words to get insights on how much it influenced each emoji choice.</span></div>
-
+<div id="container"></div>
 <script>
     var emojis = ["😂", "😍", "😭", "😊", "💕", "😒", "😉", "👌", "👍", "🙏", "👀", "🔥", "💯", "👏", "💪"];
     d3.json("/csv/emoji_insights.json", function (data) {
@@ -45,6 +58,11 @@
         .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
 
+    // tooltip to help with mouseover
+    var div = d3.select("#container").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+
     // A function that create / update the plot for a given variable:
     function update(group_data) {
         svg.selectAll("*").remove();
@@ -55,9 +73,6 @@
             .range([0, width])
             .domain(emojis)
             .padding(0.2);
-        svg.append("g")
-            .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(x))
 
         // text label for the x axis
         svg.append("text")
@@ -77,11 +92,33 @@
 
         // Add Y axis, adjusts depending on probabilities
         var y = d3.scaleLinear()
-            .domain([0, d3.max(group_data.probs, d => d.value) + 0.2])
+            .domain([d3.min(group_data.probs, d => d.value - 0.1), d3.max(group_data.probs, d => d.value) + 0.2])
             .range([height, 0]);
+
+        // Add axises to graph
+        svg.append("g")
+            .attr("transform", "translate(0," + y(0) + ")")
+            .call(d3.axisBottom(x).tickValues([]));
+        svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x).tickSize(0))
+            .select(".domain").remove();
         svg.append("g")
             .attr("class", "myYaxis")
             .call(d3.axisLeft(y));
+
+        // Gridlines for x
+        for(var i = 1; i < emojis.length; i++){
+            var e = emojis[i];
+            var x_px = x(e) - bar_width * 0.1;
+            svg.append('line')
+                .attr("x1", x_px)
+                .attr("x2", x_px)
+                .attr("y1", 0)
+                .attr("y2", height)
+                .attr("stroke","lightgray")
+                .attr("stroke-width",2);
+        }
 
         // text label for the y axis
         svg.append("text")
@@ -104,22 +141,31 @@
             .attr("x", function (d) {
                 return x(d.emoji) + x_bars(d.word);
             })
-            .attr("y", function (d) {
-                return y(0);
-            })
+            .attr("y", d => y(0))
             .attr("width", x_bars.bandwidth())
-            .attr("height", function (d) {
-                return height - y(0);
+            .attr("height", d => y(0) - y(0))
+            .attr("fill", d => color(d.word))
+            .on('mouseover', function (d) {
+                div.transition()
+                    .duration(200)
+                    .style("opacity", 1.0);
+                div.html("Emoji: " + d.emoji + "<br>" + "Word: " + d.word + "<br>" + "Prob: " + d.value.toFixed(3))
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY - 60) + "px");
             })
-            .attr("fill", d => color(d.word));
+            .on('mouseout', function (d) {
+                div.transition()
+                    .duration(200)
+                    .style("opacity", 1.0);
+                div.html("");
+            });
 
         // animation
         svg.selectAll("rect")
             .transition()
             .duration(800)
-            .attr("y", d => y(d.value))
-            .attr("height", d => height - y(d.value));
-        // .delay(function(d,i){console.log(i) ; return(i*100)});
+            .attr("y", d => y(Math.max(0, d.value)))
+            .attr("height", d => Math.abs(y(d.value) - y(0)));
 
         // legend dots
         svg.selectAll("mydots")

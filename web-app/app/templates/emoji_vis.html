@@ -92,7 +92,7 @@
 
         // Add Y axis, adjusts depending on probabilities
         var y = d3.scaleLinear()
-            .domain([d3.min(group_data.probs, d => d.value - 0.1), d3.max(group_data.probs, d => d.value) + 0.2])
+            .domain([d3.min(group_data.probs, d => d.value - 0.05), d3.max(group_data.probs, d => d.value) + 0.1])
             .range([height, 0]);
 
         // Add axises to graph
